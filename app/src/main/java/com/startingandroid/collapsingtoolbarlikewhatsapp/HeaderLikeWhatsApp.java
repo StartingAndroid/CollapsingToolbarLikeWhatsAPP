@@ -1,18 +1,26 @@
 package com.startingandroid.collapsingtoolbarlikewhatsapp;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
+
+import static com.startingandroid.collapsingtoolbarlikewhatsapp.Utils.getToolbarHeight;
 
 /**
  * Created by Zeeshan on 13/04/2016.
  */
 public class HeaderLikeWhatsApp extends CoordinatorLayout.Behavior<HeaderView> {
 
-    private Context mContext;
+    private final int mHeaderViewStartMarginLeft;
+    private final int mHeaderViewEndMarginLeft;
+    private final int mHeaderViewStartMarginBottom;
+    private final int mHeaderViewEndMarginRight;
+    private final int mHeaderViewStartTextSize;
+    private final int mHeaderViewEndTextSize;
+    private final int mToolbarHeight;
 
     private int mStartMarginLeft;
     private int mEndMarginLeft;
@@ -24,21 +32,16 @@ public class HeaderLikeWhatsApp extends CoordinatorLayout.Behavior<HeaderView> {
 
     public HeaderLikeWhatsApp(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
-    }
 
-    public HeaderLikeWhatsApp(Context context, AttributeSet attrs, Context mContext) {
-        super(context, attrs);
-        this.mContext = mContext;
-    }
+        Resources resources = context.getResources();
+        this.mHeaderViewStartMarginLeft = resources.getDimensionPixelOffset(R.dimen.header_view_start_margin_left);
+        this.mHeaderViewEndMarginLeft = resources.getDimensionPixelOffset(R.dimen.header_view_end_margin_left);
+        this.mHeaderViewStartMarginBottom = resources.getDimensionPixelOffset(R.dimen.header_view_start_margin_bottom);
+        this.mHeaderViewEndMarginRight = resources.getDimensionPixelOffset(R.dimen.header_view_end_margin_right);
+        this.mHeaderViewStartTextSize = resources.getDimensionPixelOffset(R.dimen.header_view_start_text_size);
+        this.mHeaderViewEndTextSize = resources.getDimensionPixelOffset(R.dimen.header_view_end_text_size);
 
-    public static int getToolbarHeight(Context context) {
-        int result = 0;
-        TypedValue tv = new TypedValue();
-        if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-            result = TypedValue.complexToDimensionPixelSize(tv.data, context.getResources().getDisplayMetrics());
-        }
-        return result;
+        this.mToolbarHeight = getToolbarHeight(context);
     }
 
     @Override
@@ -55,7 +58,7 @@ public class HeaderLikeWhatsApp extends CoordinatorLayout.Behavior<HeaderView> {
         float childPosition = dependency.getHeight()
                 + dependency.getY()
                 - child.getHeight()
-                - (getToolbarHeight(mContext) - child.getHeight()) * percentage / 2;
+                - (mToolbarHeight - child.getHeight()) * percentage / 2;
 
         childPosition = childPosition - mStartMarginBottom * (1f - percentage);
 
@@ -87,29 +90,28 @@ public class HeaderLikeWhatsApp extends CoordinatorLayout.Behavior<HeaderView> {
 
     private void shouldInitProperties() {
         if (mStartMarginLeft == 0) {
-            mStartMarginLeft = mContext.getResources().getDimensionPixelOffset(R.dimen.header_view_start_margin_left);
+            mStartMarginLeft = mHeaderViewStartMarginLeft;
         }
 
         if (mEndMarginLeft == 0) {
-            mEndMarginLeft = mContext.getResources().getDimensionPixelOffset(R.dimen.header_view_end_margin_left);
+            mEndMarginLeft = mHeaderViewEndMarginLeft;
         }
 
         if (mStartMarginBottom == 0) {
-            mStartMarginBottom = mContext.getResources().getDimensionPixelOffset(R.dimen.header_view_start_margin_bottom);
+            mStartMarginBottom = mHeaderViewStartMarginBottom;
         }
 
         if (mMarginRight == 0) {
-            mMarginRight = mContext.getResources().getDimensionPixelOffset(R.dimen.header_view_end_margin_right);
+            mMarginRight = mHeaderViewEndMarginRight;
         }
 
         if (mTitleStartSize == 0) {
-            mTitleEndSize = mContext.getResources().getDimensionPixelSize(R.dimen.header_view_end_text_size);
+            mTitleStartSize = mHeaderViewStartTextSize;
         }
 
-        if (mTitleStartSize == 0) {
-            mTitleStartSize = mContext.getResources().getDimensionPixelSize(R.dimen.header_view_start_text_size);
+        if (mTitleEndSize == 0) {
+            mTitleEndSize = mHeaderViewEndTextSize;
         }
     }
-
 
 }
